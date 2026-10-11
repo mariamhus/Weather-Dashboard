@@ -79,7 +79,7 @@ src/
 ## Deploying
 
 **Vercel:** ([https://vercel.com/new](https://weather-dashboard-eight-cyan.vercel.app/)).
-**Netlify:** import the repository, set the build command to `npm run build` and the publish directory to `dist`.
+
 
 ## Credits
 
