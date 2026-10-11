@@ -3,11 +3,15 @@ import { Conditions } from "./components/Conditions";
 import { CurrentPanel } from "./components/CurrentPanel";
 import { DailyForecast } from "./components/DailyForecast";
 import { ErrorState } from "./components/ErrorState";
+import { LanguageToggle } from "./components/LanguageToggle";
 import { LoadingState } from "./components/LoadingState";
 import { SearchBar } from "./components/SearchBar";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { UnitToggle } from "./components/UnitToggle";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import { useTheme } from "./hooks/useTheme";
 import { useWeather } from "./hooks/useWeather";
+import { useI18n } from "./i18n/I18nProvider";
 import type { Place, Units } from "./types";
 
 const DEFAULT_PLACE: Place = {
@@ -22,11 +26,13 @@ const DEFAULT_PLACE: Place = {
 const MAX_RECENTS = 5;
 
 export default function App() {
+  const { t } = useI18n();
   const [units, setUnits] = useLocalStorage<Units>("weather:units", "metric");
   const [place, setPlace] = useLocalStorage<Place>("weather:place", DEFAULT_PLACE);
   const [recents, setRecents] = useLocalStorage<Place[]>("weather:recents", []);
+  const { theme, toggle: toggleTheme } = useTheme();
   const [locating, setLocating] = useState(false);
-  const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<"geoUnsupported" | "geoDenied" | null>(null);
   const { state, retry } = useWeather(place, units);
 
   function selectPlace(next: Place) {
@@ -37,7 +43,7 @@ export default function App() {
 
   function useMyLocation() {
     if (!("geolocation" in navigator)) {
-      setLocationError("This browser can't share your location. Search for a city instead.");
+      setLocationError("geoUnsupported");
       return;
     }
     setLocating(true);
@@ -54,7 +60,7 @@ export default function App() {
       },
       () => {
         setLocating(false);
-        setLocationError("Location access is turned off. Allow it in your browser settings, or search for a city.");
+        setLocationError("geoDenied");
       },
       { timeout: 10000, maximumAge: 600000 },
     );
@@ -63,22 +69,26 @@ export default function App() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-5xl flex-col px-4 py-6 sm:px-6 sm:py-10">
       <header className="grid grid-cols-[1fr_auto] items-center gap-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-6">
-        <p className="text-lg font-semibold tracking-tight">Weather</p>
+        <p className="text-lg font-semibold tracking-tight">{t.appName}</p>
         <div className="col-span-2 row-start-2 sm:col-span-1 sm:row-start-auto">
           <SearchBar recents={recents} onSelect={selectPlace} onLocate={useMyLocation} locating={locating} />
         </div>
-        <UnitToggle units={units} onChange={setUnits} />
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <UnitToggle units={units} onChange={setUnits} />
+        </div>
       </header>
 
       {locationError && (
         <p role="alert" className="mt-4 text-sm text-muted">
-          {locationError}
+          {t[locationError]}
         </p>
       )}
 
       <main className="mt-6 flex-1 sm:mt-8">
         {state.status === "loading" && <LoadingState />}
-        {state.status === "error" && <ErrorState message={state.error} onRetry={retry} />}
+        {state.status === "error" && <ErrorState onRetry={retry} />}
         {state.status === "success" && (
           <>
             <CurrentPanel place={place} forecast={state.data} />
@@ -91,7 +101,7 @@ export default function App() {
       </main>
 
       <footer className="mt-14 text-xs text-muted">
-        Weather data by{" "}
+        {t.dataBy}{" "}
         <a href="https://open-meteo.com/" target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-ink">
           Open-Meteo
         </a>

@@ -1,5 +1,6 @@
 import { HourlyStrip } from "./HourlyStrip";
 import { WeatherIcon } from "./WeatherIcon";
+import { useI18n } from "../i18n/I18nProvider";
 import { degrees, formatLongDate, placeRegion } from "../lib/format";
 import { skyTheme } from "../lib/sky";
 import { describeWeather } from "../lib/weatherCodes";
@@ -11,11 +12,13 @@ interface CurrentPanelProps {
 }
 
 export function CurrentPanel({ place, forecast }: CurrentPanelProps) {
+  const { t, locale } = useI18n();
   const { current, hourly, daily } = forecast;
-  const { label, sky } = describeWeather(current.weatherCode);
+  const { label, sky } = describeWeather(current.weatherCode, t);
   const theme = skyTheme(sky, current.isDay);
   const today = daily[0];
-  const region = placeRegion(place);
+  const region = placeRegion(place, t.listSeparator);
+  const name = place.id === -1 ? t.yourLocation : place.name;
 
   return (
     <section
@@ -29,10 +32,10 @@ export function CurrentPanel({ place, forecast }: CurrentPanelProps) {
       <div className="flex items-start justify-between gap-6">
         <div className="min-w-0">
           <h1 id="place-heading" className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">
-            {place.name}
+            {name}
           </h1>
           {region && <p className="mt-1 truncate text-sm opacity-80">{region}</p>}
-          <p className="mt-0.5 text-sm opacity-80">{formatLongDate(current.time)}</p>
+          <p className="mt-0.5 text-sm opacity-80">{formatLongDate(current.time, locale)}</p>
         </div>
         <WeatherIcon sky={sky} isDay={current.isDay} className="size-14 shrink-0 sm:size-20" strokeWidth={1.2} />
       </div>
@@ -43,12 +46,8 @@ export function CurrentPanel({ place, forecast }: CurrentPanelProps) {
         </p>
         <div className="pb-1">
           <p className="text-xl font-medium sm:text-2xl">{label}</p>
-          <p className="mt-1 text-sm opacity-80">Feels like {degrees(current.apparentTemperature)}</p>
-          {today && (
-            <p className="text-sm opacity-80">
-              High {degrees(today.max)}, low {degrees(today.min)}
-            </p>
-          )}
+          <p className="mt-1 text-sm opacity-80">{t.feelsLike(degrees(current.apparentTemperature))}</p>
+          {today && <p className="text-sm opacity-80">{t.highLow(degrees(today.max), degrees(today.min))}</p>}
         </div>
       </div>
 

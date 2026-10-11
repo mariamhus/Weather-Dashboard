@@ -7,8 +7,20 @@
     <meta name="description" content="Search any city for current conditions, the next 24 hours, and a 7-day forecast." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <title>Weather Dashboard</title>
+    <script>
+      try {
+        const stored = JSON.parse(localStorage.getItem("weather:lang"));
+        const lang = stored === "ar" || stored === "en" ? stored : navigator.language.toLowerCase().startsWith("ar") ? "ar" : "en";
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+      } catch {}
+      try {
+        const theme = JSON.parse(localStorage.getItem("weather:theme"));
+        if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

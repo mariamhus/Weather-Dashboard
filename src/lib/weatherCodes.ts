@@ -1,3 +1,5 @@
+import type { Messages } from "../i18n/en";
+
 export type SkyKind = "clear" | "partly" | "cloudy" | "fog" | "drizzle" | "rain" | "snow" | "storm";
 
 interface CodeInfo {
@@ -5,37 +7,37 @@ interface CodeInfo {
   sky: SkyKind;
 }
 
-const CODES: Record<number, CodeInfo> = {
-  0: { label: "Clear sky", sky: "clear" },
-  1: { label: "Mostly clear", sky: "clear" },
-  2: { label: "Partly cloudy", sky: "partly" },
-  3: { label: "Overcast", sky: "cloudy" },
-  45: { label: "Fog", sky: "fog" },
-  48: { label: "Freezing fog", sky: "fog" },
-  51: { label: "Light drizzle", sky: "drizzle" },
-  53: { label: "Drizzle", sky: "drizzle" },
-  55: { label: "Heavy drizzle", sky: "drizzle" },
-  56: { label: "Freezing drizzle", sky: "drizzle" },
-  57: { label: "Heavy freezing drizzle", sky: "drizzle" },
-  61: { label: "Light rain", sky: "rain" },
-  63: { label: "Rain", sky: "rain" },
-  65: { label: "Heavy rain", sky: "rain" },
-  66: { label: "Freezing rain", sky: "rain" },
-  67: { label: "Heavy freezing rain", sky: "rain" },
-  71: { label: "Light snow", sky: "snow" },
-  73: { label: "Snow", sky: "snow" },
-  75: { label: "Heavy snow", sky: "snow" },
-  77: { label: "Snow grains", sky: "snow" },
-  80: { label: "Light showers", sky: "rain" },
-  81: { label: "Showers", sky: "rain" },
-  82: { label: "Heavy showers", sky: "rain" },
-  85: { label: "Snow showers", sky: "snow" },
-  86: { label: "Heavy snow showers", sky: "snow" },
-  95: { label: "Thunderstorm", sky: "storm" },
-  96: { label: "Thunderstorm with hail", sky: "storm" },
-  99: { label: "Severe thunderstorm with hail", sky: "storm" },
+const SKIES: Record<number, SkyKind> = {
+  0: "clear",
+  1: "clear",
+  2: "partly",
+  3: "cloudy",
+  45: "fog",
+  48: "fog",
+  51: "drizzle",
+  53: "drizzle",
+  55: "drizzle",
+  56: "drizzle",
+  57: "drizzle",
+  61: "rain",
+  63: "rain",
+  65: "rain",
+  66: "rain",
+  67: "rain",
+  71: "snow",
+  73: "snow",
+  75: "snow",
+  77: "snow",
+  80: "rain",
+  81: "rain",
+  82: "rain",
+  85: "snow",
+  86: "snow",
+  95: "storm",
+  96: "storm",
+  99: "storm",
 };
 
-export function describeWeather(code: number): CodeInfo {
-  return CODES[code] ?? { label: "Unknown conditions", sky: "cloudy" };
+export function describeWeather(code: number, t: Pick<Messages, "weatherCodes" | "unknownWeather">): CodeInfo {
+  return { label: t.weatherCodes[code] ?? t.unknownWeather, sky: SKIES[code] ?? "cloudy" };
 }

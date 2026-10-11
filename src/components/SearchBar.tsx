@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { LoaderCircle, LocateFixed, Search } from "lucide-react";
+import { useI18n } from "../i18n/I18nProvider";
 import { searchPlaces } from "../lib/api";
 import { placeRegion } from "../lib/format";
 import { useDebounce } from "../hooks/useDebounce";
@@ -13,10 +14,11 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarProps) {
+  const { t, lang } = useI18n();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Place[]>([]);
   const [searching, setSearching] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -30,28 +32,28 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
   useEffect(() => {
     if (term.length < 2) {
       setResults([]);
-      setError(null);
+      setError(false);
       setSearching(false);
       return;
     }
     const controller = new AbortController();
     setSearching(true);
-    searchPlaces(term, controller.signal)
+    searchPlaces(term, lang, controller.signal)
       .then((places) => {
         setResults(places);
-        setError(null);
+        setError(false);
         setActive(places.length > 0 ? 0 : -1);
       })
-      .catch((err: unknown) => {
+      .catch(() => {
         if (controller.signal.aborted) return;
         setResults([]);
-        setError(err instanceof Error ? err.message : "Place search failed. Try again.");
+        setError(true);
       })
       .finally(() => {
         if (!controller.signal.aborted) setSearching(false);
       });
     return () => controller.abort();
-  }, [term]);
+  }, [term, lang]);
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -90,11 +92,11 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
     }
   }
 
-  let emptyMessage = "Type a city name to see its forecast.";
+  let emptyMessage = t.typeCity;
   if (!showingRecents) {
-    if (searching || term !== trimmed) emptyMessage = "Searching…";
-    else if (error) emptyMessage = error;
-    else emptyMessage = `No places match “${term}”. Check the spelling or try a nearby city.`;
+    if (searching || term !== trimmed) emptyMessage = t.searching;
+    else if (error) emptyMessage = t.searchFailed;
+    else emptyMessage = t.noMatches(term);
   }
 
   const activeId = open && items[active] ? `${listId}-option-${active}` : undefined;
@@ -104,18 +106,18 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
       <div className="relative min-w-0 flex-1">
         <Search
           aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-muted"
+          className="pointer-events-none absolute start-4 top-1/2 size-4 -translate-y-1/2 text-muted"
         />
         <input
           type="search"
           role="combobox"
-          aria-label="Search for a city"
+          aria-label={t.searchPlaceholder}
           aria-expanded={open}
           aria-controls={listId}
           aria-autocomplete="list"
           aria-activedescendant={activeId}
           autoComplete="off"
-          placeholder="Search for a city"
+          placeholder={t.searchPlaceholder}
           value={query}
           onChange={(event) => {
             setQuery(event.target.value);
@@ -124,12 +126,12 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          className="h-11 w-full rounded-full border border-line bg-surface pr-10 pl-10 text-[15px] placeholder:text-muted focus:border-rain focus:outline-none"
+          className="h-11 w-full rounded-full border border-line bg-surface ps-10 pe-10 text-[15px] placeholder:text-muted focus:border-rain focus:outline-none"
         />
         {searching && (
           <LoaderCircle
             aria-hidden="true"
-            className="absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted motion-safe:animate-spin"
+            className="absolute end-4 top-1/2 size-4 -translate-y-1/2 text-muted motion-safe:animate-spin"
           />
         )}
       </div>
@@ -138,8 +140,8 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
         type="button"
         onClick={onLocate}
         disabled={locating}
-        aria-label="Use my location"
-        title="Use my location"
+        aria-label={t.useMyLocation}
+        title={t.useMyLocation}
         className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface transition-colors hover:border-muted disabled:opacity-60"
       >
         {locating ? (
@@ -152,10 +154,10 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
       {open && (
         <div className="absolute top-full right-0 left-0 z-20 mt-2 overflow-hidden rounded-2xl border border-line bg-surface shadow-xl shadow-black/10">
           {showingRecents && recents.length > 0 && (
-            <p className="px-4 pt-3 pb-1 text-xs text-muted">Recent searches</p>
+            <p className="px-4 pt-3 pb-1 text-xs text-muted">{t.recentSearches}</p>
           )}
           {items.length > 0 ? (
-            <ul id={listId} role="listbox" aria-label="Places" className="py-1">
+            <ul id={listId} role="listbox" aria-label={t.places} className="py-1">
               {items.map((place, index) => (
                 <li
                   key={`${place.id}-${place.latitude}-${place.longitude}`}
@@ -169,8 +171,8 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
                     index === active ? "bg-line/60" : ""
                   }`}
                 >
-                  <span className="shrink-0 font-medium">{place.name}</span>
-                  <span className="truncate text-sm text-muted">{placeRegion(place)}</span>
+                  <span className="shrink-0 font-medium">{place.id === -1 ? t.yourLocation : place.name}</span>
+                  <span className="truncate text-sm text-muted">{placeRegion(place, t.listSeparator)}</span>
                 </li>
               ))}
             </ul>

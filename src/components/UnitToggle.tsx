@@ -1,3 +1,4 @@
+import { useI18n } from "../i18n/I18nProvider";
 import type { Units } from "../types";
 
 interface UnitToggleProps {
@@ -5,15 +6,16 @@ interface UnitToggleProps {
   onChange: (units: Units) => void;
 }
 
-const OPTIONS: { value: Units; label: string; name: string }[] = [
-  { value: "metric", label: "°C", name: "Celsius" },
-  { value: "imperial", label: "°F", name: "Fahrenheit" },
-];
-
 export function UnitToggle({ units, onChange }: UnitToggleProps) {
+  const { t } = useI18n();
+  const options: { value: Units; label: string; name: string }[] = [
+    { value: "metric", label: "°C", name: t.celsius },
+    { value: "imperial", label: "°F", name: t.fahrenheit },
+  ];
+
   return (
-    <div role="group" aria-label="Temperature unit" className="flex rounded-full border border-line bg-surface p-1">
-      {OPTIONS.map((option) => {
+    <div role="group" aria-label={t.temperatureUnit} className="flex rounded-full border border-line bg-surface p-1">
+      {options.map((option) => {
         const selected = option.value === units;
         return (
           <button

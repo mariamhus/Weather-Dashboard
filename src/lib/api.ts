@@ -42,8 +42,8 @@ interface RawForecast {
   };
 }
 
-export async function searchPlaces(query: string, signal?: AbortSignal): Promise<Place[]> {
-  const params = new URLSearchParams({ name: query, count: "6", language: "en", format: "json" });
+export async function searchPlaces(query: string, language: string, signal?: AbortSignal): Promise<Place[]> {
+  const params = new URLSearchParams({ name: query, count: "6", language, format: "json" });
   const response = await fetch(`${GEO_URL}?${params}`, { signal });
   if (!response.ok) {
     throw new Error("Place search is unavailable right now. Try again in a moment.");

@@ -1,5 +1,6 @@
 import { Droplet } from "lucide-react";
 import { WeatherIcon } from "./WeatherIcon";
+import { useI18n } from "../i18n/I18nProvider";
 import { degrees, formatWeekday } from "../lib/format";
 import { describeWeather } from "../lib/weatherCodes";
 import type { DailyPoint } from "../types";
@@ -24,23 +25,24 @@ function rangeStyle(min: number, max: number, weekMin: number, weekMax: number) 
 }
 
 export function DailyForecast({ days }: DailyForecastProps) {
+  const { t, locale } = useI18n();
   const weekMin = Math.min(...days.map((day) => day.min));
   const weekMax = Math.max(...days.map((day) => day.max));
 
   return (
     <section aria-labelledby="daily-heading">
       <h2 id="daily-heading" className="text-lg font-semibold tracking-tight">
-        7-day forecast
+        {t.dailyHeading}
       </h2>
       <ul className="mt-3 border-t border-line">
         {days.map((day, index) => {
-          const { label, sky } = describeWeather(day.weatherCode);
+          const { label, sky } = describeWeather(day.weatherCode, t);
           return (
             <li
               key={day.date}
               className="grid grid-cols-[3.75rem_1.75rem_3rem_2.25rem_minmax(0,1fr)_2.25rem] items-center gap-3 border-b border-line py-3 sm:grid-cols-[5rem_2rem_3.5rem_2.5rem_minmax(0,1fr)_2.5rem] sm:gap-4"
             >
-              <span className="font-medium">{formatWeekday(day.date, index)}</span>
+              <span className="font-medium">{index === 0 ? t.today : formatWeekday(day.date, locale)}</span>
               <span title={label}>
                 <WeatherIcon sky={sky} isDay className="size-6 text-muted" strokeWidth={1.6} />
                 <span className="sr-only">{label}</span>
@@ -49,20 +51,21 @@ export function DailyForecast({ days }: DailyForecastProps) {
                 {day.precipitationChance >= 10 && (
                   <>
                     <Droplet aria-hidden="true" className="size-3" />
-                    <span className="sr-only">Chance of precipitation </span>
+                    <span className="sr-only">{t.chanceOfPrecipitation} </span>
                     {day.precipitationChance}%
                   </>
                 )}
               </span>
-              <span className="text-right text-muted tabular-nums">
-                <span className="sr-only">Low </span>
+              <span className="text-end text-muted tabular-nums">
+                <span className="sr-only">{t.low} </span>
                 {degrees(day.min)}
               </span>
-              <div aria-hidden="true" className="relative h-1.5 rounded-full bg-line">
+              {/* Mirrored in RTL so cold sits on the low side and warm on the high side. */}
+              <div aria-hidden="true" className="relative h-1.5 rounded-full bg-line rtl:-scale-x-100">
                 <div className="absolute inset-y-0 rounded-full" style={rangeStyle(day.min, day.max, weekMin, weekMax)} />
               </div>
               <span className="font-medium tabular-nums">
-                <span className="sr-only">High </span>
+                <span className="sr-only">{t.high} </span>
                 {degrees(day.max)}
               </span>
             </li>

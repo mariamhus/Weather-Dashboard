@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Bricolage Grotesque", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --color-paper: #edf1f4;
   --color-surface: #f8fafb;
   --color-ink: #15222c;
@@ -14,7 +14,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --color-paper: #0f171e;
     --color-surface: #16212a;
     --color-ink: #e6edf2;
@@ -24,8 +24,25 @@
   }
 }
 
+:root[data-theme="dark"] {
+  --color-paper: #0f171e;
+  --color-surface: #16212a;
+  --color-ink: #e6edf2;
+  --color-muted: #8d9ba7;
+  --color-line: #26343f;
+  --color-rain: #7db4ea;
+}
+
 html {
   color-scheme: light dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
@@ -34,6 +51,11 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* Letter-spacing breaks the joins between Arabic letters. */
+html[lang="ar"] * {
+  letter-spacing: normal !important;
 }
 
 :focus-visible {

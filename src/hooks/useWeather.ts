@@ -5,7 +5,7 @@ import type { Forecast, Place, Units } from "../types";
 type WeatherState =
   | { status: "loading" }
   | { status: "success"; data: Forecast }
-  | { status: "error"; error: string };
+  | { status: "error" };
 
 export function useWeather(place: Place, units: Units) {
   const [state, setState] = useState<WeatherState>({ status: "loading" });
@@ -17,12 +17,9 @@ export function useWeather(place: Place, units: Units) {
 
     fetchForecast(place.latitude, place.longitude, units, controller.signal)
       .then((data) => setState({ status: "success", data }))
-      .catch((error: unknown) => {
+      .catch(() => {
         if (controller.signal.aborted) return;
-        setState({
-          status: "error",
-          error: error instanceof Error ? error.message : "Something went wrong loading the forecast.",
-        });
+        setState({ status: "error" });
       });
 
     return () => controller.abort();
