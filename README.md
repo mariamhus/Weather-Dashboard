@@ -78,9 +78,8 @@ src/
 
 ## Deploying
 
-**Vercel:** import the repository at [vercel.com/new](https://vercel.com/new). Vercel detects Vite automatically, so no configuration is needed.
+**Vercel:** ([https://vercel.com/new](https://weather-dashboard-eight-cyan.vercel.app/)).
 
-**Netlify:** import the repository, set the build command to `npm run build` and the publish directory to `dist`.
 
 ## Credits
 
