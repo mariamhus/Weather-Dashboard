@@ -20,7 +20,7 @@ export function HourlyStrip({ hours, lineColor }: HourlyStripProps) {
           return (
             <li
               key={hour.time}
-              className="flex min-w-[4.25rem] shrink-0 snap-start flex-col items-center gap-2 px-2 py-2 text-center"
+              className="relative flex min-w-[4.25rem] shrink-0 snap-start flex-col items-center gap-2 px-2 py-2 text-center"
             >
               <span className="text-xs opacity-80">{index === 0 ? t.now : formatHour(hour.time, locale)}</span>
               <WeatherIcon sky={sky} isDay={hour.isDay} className="size-6" strokeWidth={1.6} />

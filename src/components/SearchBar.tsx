@@ -126,7 +126,7 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          className="h-11 w-full rounded-full border border-line bg-surface ps-10 pe-10 text-[15px] placeholder:text-muted focus:border-rain focus:outline-none"
+          className="h-11 w-full rounded-full border border-line bg-surface ps-10 pe-10 text-base sm:text-[15px] placeholder:text-muted focus:border-rain focus:outline-none"
         />
         {searching && (
           <LoaderCircle
@@ -171,8 +171,8 @@ export function SearchBar({ recents, onSelect, onLocate, locating }: SearchBarPr
                     index === active ? "bg-line/60" : ""
                   }`}
                 >
-                  <span className="shrink-0 font-medium">{place.id === -1 ? t.yourLocation : place.name}</span>
-                  <span className="truncate text-sm text-muted">{placeRegion(place, t.listSeparator)}</span>
+                  <span className="max-w-full shrink-0 truncate font-medium">{place.id === -1 ? t.yourLocation : place.name}</span>
+                  <span className="min-w-0 truncate text-sm text-muted">{placeRegion(place, t.listSeparator)}</span>
                 </li>
               ))}
             </ul>

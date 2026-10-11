@@ -40,7 +40,7 @@ export function DailyForecast({ days }: DailyForecastProps) {
           return (
             <li
               key={day.date}
-              className="grid grid-cols-[3.75rem_1.75rem_3rem_2.25rem_minmax(0,1fr)_2.25rem] items-center gap-3 border-b border-line py-3 sm:grid-cols-[5rem_2rem_3.5rem_2.5rem_minmax(0,1fr)_2.5rem] sm:gap-4"
+              className="relative grid grid-cols-[3.75rem_1.75rem_3rem_2.25rem_minmax(0,1fr)_2.25rem] items-center gap-2 border-b border-line py-3 sm:grid-cols-[5rem_2rem_3.5rem_2.5rem_minmax(0,1fr)_2.5rem] sm:gap-4"
             >
               <span className="font-medium">{index === 0 ? t.today : formatWeekday(day.date, locale)}</span>
               <span title={label}>

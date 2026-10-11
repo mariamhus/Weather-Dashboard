@@ -18,8 +18,14 @@ function Item({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function Unit({ children }: { children: ReactNode }) {
-  return <span className="ms-1 text-base font-normal text-muted">{children}</span>;
+// Flex keeps the number and its unit apart in both reading directions.
+function Value({ unit, children }: { unit: ReactNode; children: ReactNode }) {
+  return (
+    <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
+      <span>{children}</span>
+      <span className="text-base font-normal text-muted">{unit}</span>
+    </span>
+  );
 }
 
 export function Conditions({ forecast, units }: ConditionsProps) {
@@ -36,17 +42,13 @@ export function Conditions({ forecast, units }: ConditionsProps) {
       </h2>
       <dl className="mt-3 grid grid-cols-2 border-t border-line">
         <Item label={t.humidity}>
-          {Math.round(current.humidity)}
-          <Unit>%</Unit>
+          <Value unit="%">{Math.round(current.humidity)}</Value>
         </Item>
         <Item label={t.wind}>
           <span className="inline-flex items-center gap-2">
-            <span>
+            <Value unit={`${windUnit} ${compassPoint(current.windDirection, t.compass)}`}>
               {Math.round(current.windSpeed)}
-              <Unit>
-                {windUnit} {compassPoint(current.windDirection, t.compass)}
-              </Unit>
-            </span>
+            </Value>
             <Navigation2
               aria-hidden="true"
               className="size-4 text-muted"
@@ -55,12 +57,10 @@ export function Conditions({ forecast, units }: ConditionsProps) {
           </span>
         </Item>
         <Item label={t.rainLastHour}>
-          {current.precipitation}
-          <Unit>{rainUnit}</Unit>
+          <Value unit={rainUnit}>{current.precipitation}</Value>
         </Item>
         <Item label={t.chanceOfRainToday}>
-          {today?.precipitationChance ?? 0}
-          <Unit>%</Unit>
+          <Value unit="%">{today?.precipitationChance ?? 0}</Value>
         </Item>
         {today && (
           <>
