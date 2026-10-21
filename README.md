@@ -81,8 +81,6 @@ src/
 
 **Vercel:** import the repository at [vercel.com/new](https://vercel.com/new). Vercel detects Vite automatically, so no configuration is needed.
 
-**Netlify:** import the repository, set the build command to `npm run build` and the publish directory to `dist`.
-
 ## Credits
 
 Weather data by [Open-Meteo](https://open-meteo.com/), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
