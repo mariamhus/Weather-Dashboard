@@ -2,9 +2,10 @@
 
 A responsive weather dashboard built with React and TypeScript. Search any city in the world to see current conditions, an hourly forecast for the next 24 hours, and a 7-day outlook. The main panel takes on the color of the actual sky, shifting with the weather and between day and night.
 
-**Live demo:** _add your Vercel or Netlify link here_
+**Live demo:** [weather-dashboard-eight-cyan.vercel.app](https://weather-dashboard-eight-cyan.vercel.app/)
 
-![Screenshot](./screenshot.png)
+<img width="1157" height="909" alt="image" src="https://github.com/user-attachments/assets/073a7e4b-c074-4728-a481-f859c4aa62b6" />
+
 
 ## Features
 
@@ -33,19 +34,19 @@ A responsive weather dashboard built with React and TypeScript. Search any city 
 You need [Node.js](https://nodejs.org/) 20.19 or newer.
 
 ```bash
-git clone https://github.com/<your-username>/weather-dashboard.git
-cd weather-dashboard
+git clone https://github.com/mariamhus/Weather-Dashboard.git
+cd Weather-Dashboard
 npm install
 npm run dev
 ```
 
 Then open http://localhost:5173.
 
-| Command           | What it does                         |
-| ----------------- | ------------------------------------ |
-| `npm run dev`     | Starts the dev server                |
-| `npm run build`   | Type-checks and builds to `dist/`    |
-| `npm run preview` | Serves the production build locally  |
+| Command           | What it does                        |
+| ----------------- | ----------------------------------- |
+| `npm run dev`     | Starts the dev server               |
+| `npm run build`   | Type-checks and builds to `dist/`   |
+| `npm run preview` | Serves the production build locally |
 
 ## Project structure
 
@@ -78,8 +79,9 @@ src/
 
 ## Deploying
 
-**Vercel:** ([https://vercel.com/new](https://weather-dashboard-eight-cyan.vercel.app/)).
+**Vercel:** import the repository at [vercel.com/new](https://vercel.com/new). Vercel detects Vite automatically, so no configuration is needed.
 
+**Netlify:** import the repository, set the build command to `npm run build` and the publish directory to `dist`.
 
 ## Credits
 
